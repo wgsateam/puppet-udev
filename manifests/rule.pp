@@ -39,12 +39,10 @@
 # === Example
 #
 define udev::rule(
-  $ensure  = present,
-  $content = undef,
-  $source  = undef
+  String           $ensure  = present,
+  Optional[String] $content = undef,
+  Optional[String] $source  = undef
 ) {
-  validate_re($ensure, '^present$|^absent$')
-
   include udev
 
   # only $source or $content are allowed
@@ -57,15 +55,11 @@ define udev::rule(
     notify => Class['udev::udevadm::trigger'],
   }
   if $source {
-    validate_string($source)
-
     if $content {
       fail("${title}: parameters \$source and \$content are mutually exclusive")
     }
     $config_content = { source => $source }
   } elsif $content {
-    validate_string($content)
-
     if $source {
       fail("${title}: parameters \$source and \$content are mutually exclusive")
     }
